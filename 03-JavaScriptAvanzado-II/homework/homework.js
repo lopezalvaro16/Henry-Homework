@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // Closures
 
@@ -13,7 +13,22 @@ nuevoContador()     // 2
 const otroContador = counter()
 otroContador()      // 1
 otroContador()      // 2 */
-function counter() {}
+function counter() {
+  let contador = 0;
+
+  return function () {
+    contador++;
+    return contador;
+  };
+}
+
+const nuevoContador = counter();
+console.log(nuevoContador()); // Output: 1
+console.log(nuevoContador()); // Output: 2
+
+const otroContador = counter();
+console.log(otroContador()); // Output: 1
+console.log(otroContador()); // Output: 2
 
 /* Ejercicio 2
 Tu tarea aquí es lograr, mediante un closure, que cacheFunction actúe como una memoria caché para el callback 
@@ -33,24 +48,37 @@ otra vez cálculos que ya se hicieron anteriormente.
   squareCache(5)    // invocará a square(5), almacenará el resultado y lo retornará
   squareCache(5)    // no volverá a invocar a square, simplemente buscará en la caché cuál es el resultado de square(5) y lo retornará (tip: si usaste un objeto, podés usar hasOwnProperty) */
 
-function cacheFunction(cb) {}
+function cacheFunction(cb) {
+  const c = {};
+  return (arg) => (c.hasOwnProperty(arg) ? c[arg] : (c[arg] = cb(arg)));
+}
+
+function square(n) {
+  return n * n;
+}
+
+const squareCache = cacheFunction(square);
+
+console.log(squareCache(5)); // Output: Ejecutando callback para el argumento 5, 25
+console.log(squareCache(5)); // Output: Obteniendo resultado de la memoria caché para el argumento 5, 25
 
 //----------------------------------------
 
 // Bind
 
 var instructor = {
-   nombre: 'Franco',
-   edad: 25,
+  nombre: "Franco",
+  edad: 25,
 };
 
 var alumno = {
-   nombre: 'Juan',
-   curso: 'FullStack',
+  nombre: "Juan",
+  curso: "FullStack",
 };
 
 function getNombre() {
-  return this.nombre;}
+  return this.nombre;
+}
 
 /*
   Ejercicio 3
@@ -58,8 +86,11 @@ function getNombre() {
   Usando el método bind() guardar, en las dos variables declaradas a continuación, dos funciones que actúen como getNombre pero retornen el nombre del instructor y del alumno, respectivamente.
 */
 
-let getNombreInstructor = getNombre.bind();
-let getNombreAlumno = getNombre.bind();
+let getNombreInstructor = getNombre.bind(instructor);
+let getNombreAlumno = getNombre.bind(alumno);
+
+console.log(getNombreInstructor()); // Output: Franco
+console.log(getNombreAlumno()); // Output: Juan
 
 /*
   Ejercicio 4
@@ -67,22 +98,26 @@ let getNombreAlumno = getNombre.bind();
 */
 
 function crearCadena(delimitadorIzquierda, delimitadorDerecha, cadena) {
-    return delimitadorIzquierda + cadena + delimitadorDerecha;
+  return delimitadorIzquierda + cadena + delimitadorDerecha;
 }
 
-let textoAsteriscos = crearCadena.bind();
-let textoGuiones = crearCadena.bind();
-let textoUnderscore = crearCadena.bind();
+let textoAsteriscos = crearCadena.bind(this, "*", "*");
+let textoGuiones = crearCadena.bind(this, "-", "-");
+let textoUnderscore = crearCadena.bind(this, "_", "_");
+
+console.log(textoAsteriscos("Hola")); // Output: *Hola*
+console.log(textoGuiones("Hola Mundo")); // Output: -Hola Mundo-
+console.log(textoUnderscore("Adiós")); // Output: _Adiós_
 
 // No modifiquen nada debajo de esta linea
 // --------------------------------
 
 module.exports = {
-   counter,
-   cacheFunction,
-   getNombreInstructor,
-   getNombreAlumno,
-   textoAsteriscos,
-   textoGuiones,
-   textoUnderscore,
+  counter,
+  cacheFunction,
+  getNombreInstructor,
+  getNombreAlumno,
+  textoAsteriscos,
+  textoGuiones,
+  textoUnderscore,
 };
